@@ -1,0 +1,38 @@
+// Patch para exibir o clima no card da fazenda
+// 1. Importar o serviço de clima
+// 2. Buscar clima para todas as fazendas ao carregar
+// 3. Exibir resumo do clima no card
+
+// 1. Importação
+import { getClimaParaFazendas } from '../api/climaService';
+
+// 2. No MapaGeral, adicionar estado para clima
+const [climas, setClimas] = useState({});
+const [climaLoading, setClimaLoading] = useState(false);
+
+// 3. Buscar clima ao carregar fazendas
+useEffect(() => {
+  if (fazendas.length > 0) {
+    setClimaLoading(true);
+    getClimaParaFazendas(fazendas)
+      .then(results => {
+        // Mapear por id da fazenda
+        const climaMap = {};
+        results.forEach(r => {
+          climaMap[r.fazendaId] = r.clima;
+        });
+        setClimas(climaMap);
+        setClimaLoading(false);
+      })
+      .catch(() => setClimaLoading(false));
+  }
+}, [fazendas]);
+
+// 4. No card da fazenda, exibir clima
+{climaLoading && <div style={{color:'#b0bec5'}}>Carregando clima...</div>}
+{!climaLoading && climas[fazenda.id] && (
+  <div style={{marginTop:8, background:'#23272f', borderRadius:6, padding:8}}>
+    <b>Clima:</b> {climas[fazenda.id].descricao}, {climas[fazenda.id].temperatura}°C
+    <img src={`https://openweathermap.org/img/wn/${climas[fazenda.id].icone}.png`} alt="" style={{verticalAlign:'middle',marginLeft:4}} />
+  </div>
+)}

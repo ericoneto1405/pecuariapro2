@@ -1,0 +1,73 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #23272f;
+  color: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.header-left .logo {
+  font-weight: bold;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  color: #1976d2;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 1.1rem;
+}
+
+.header-date {
+  font-weight: 500;
+  color: #b0bec5;
+}
+
+.header-clock {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.15rem;
+  color: #fff;
+  background: #1a1d22;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-left: 4px;
+}
+
+.header-right .speed-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.speed-btn {
+  background: #1a1d22;
+  color: #b0bec5;
+  border: 1.5px solid #23272f;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.speed-btn:hover {
+  background: #23272f;
+  color: #1976d2;
+  border: 1.5px solid #1976d2;
+}
+
+.speed-btn.active {
+  background: #1976d2;
+  color: #fff;
+  border: 1.5px solid #1976d2;
+} 

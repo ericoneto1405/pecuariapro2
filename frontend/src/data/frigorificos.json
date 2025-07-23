@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "nome": "Frigorífico Progresso",
+    "regiao": "Centro-Oeste",
+    "perfil": "À vista e Barter",
+    "preco_arroba": 250,
+    "pagamento": ["À vista", "Barter"],
+    "bonificacoes": ["Novilho precoce", "Rastreabilidade"],
+    "descricao": "Paga à vista, preço menor, opção de barter (insumos). Saúde financeira estável.",
+    "requisitos": []
+  },
+  {
+    "id": 2,
+    "nome": "Frigorífico Capital",
+    "regiao": "Sudeste",
+    "perfil": "A prazo (30/60 dias)",
+    "preco_arroba": 270,
+    "pagamento": ["30 dias", "60 dias"],
+    "bonificacoes": [],
+    "descricao": "Paga mais caro, mas só a prazo. Precisa de capital, pode atrasar pagamentos.",
+    "requisitos": []
+  },
+  {
+    "id": 3,
+    "nome": "Frigorífico Premium",
+    "regiao": "Sul",
+    "perfil": "Nicho Premium/Exportação",
+    "preco_arroba": 300,
+    "pagamento": ["À vista", "30 dias"],
+    "bonificacoes": ["Raça premium", "Acabamento de gordura", "Idade jovem"],
+    "descricao": "Prêmios para animais jovens, raças premium, acabamento, rastreabilidade. Exige requisitos rigorosos.",
+    "requisitos": ["Raça premium", "Idade < 24 meses", "Acabamento de gordura"]
+  }
+] 

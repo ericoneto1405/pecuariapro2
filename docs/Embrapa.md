@@ -1,0 +1,44 @@
+Pastagens Resilientes: As Melhores Opções para Cada Bioma Brasileiro Diante das Mudanças Climáticas
+A escolha da pastagem correta é um dos pilares para a sustentabilidade e lucratividade da pecuária. Com o cenário de mudanças climáticas, que projeta aumento de temperaturas, eventos extremos e alterações nos regimes de chuva, a seleção de forrageiras deve ir além da produtividade, priorizando a resiliência. A seguir, apresentamos uma pesquisa aprofundada sobre as duas pastagens mais adaptadas para cada grande bioma brasileiro, considerando os desafios climáticos futuros.
+
+1. Bioma Cerrado
+O Cerrado enfrenta o desafio de um período seco cada vez mais longo e intenso. A resiliência hídrica e a capacidade de suportar altas temperaturas são, portanto, cruciais.
+
+Capim Piatã (Urochloa brizantha cv. BRS Piatã): Esta cultivar destaca-se por sua alta tolerância à seca, graças a um sistema radicular profundo e vigoroso que busca água em camadas mais baixas do solo. Essa característica é vital para resistir a longos períodos de estiagem. Além disso, o Capim Piatã mantém uma boa qualidade de forragem mesmo durante a seca, o que garante a nutrição do rebanho quando outros pastos já perderam seu valor. Sua estrutura de crescimento mais aberta também facilita a consorciação com leguminosas, melhorando a saúde do solo e a resiliência do sistema.
+
+Capim Zuri (Megathyrsus maximus cv. BRS Zuri): O Zuri é uma alternativa de alta produtividade e qualidade para solos de média a alta fertilidade. Sua principal vantagem frente às mudanças climáticas é a boa capacidade de produção, que permite um maior acúmulo de forragem no período das águas para a formação de feno ou silagem, garantindo alimento para a época seca. Apresenta também tolerância moderada ao encharcamento, o que o torna uma opção estratégica para diversificar as áreas de pastagem e reduzir os riscos associados a eventos de chuva extrema, que também são uma projeção climática.
+
+2. Bioma Amazônia
+Na Amazônia, os desafios incluem solos ácidos e de baixa fertilidade, alta umidade e projeções de eventos climáticos extremos, como secas e inundações mais severas em diferentes partes do bioma.
+
+Capim Humidicola (Urochloa humidicola): Conhecido popularmente como "quicuio-da-amazônia", este capim é uma das forrageiras mais adaptadas aos desafios amazônicos. Sua principal vantagem é a excepcional tolerância a solos ácidos e de baixa fertilidade, além de suportar bem o encharcamento. Essa dupla tolerância (acidez e umidade) o torna resiliente tanto em áreas de várzea quanto em terra firme. Sua capacidade de formar uma cobertura densa ao solo ajuda a protegê-lo da erosão durante chuvas intensas.
+
+Consórcio de Braquiarão com Amendoim Forrageiro (Urochloa brizantha cv. Marandu + Arachis pintoi): O Braquiarão (Marandu) é a forrageira mais plantada no Brasil, com um sistema radicular profundo que lhe confere boa tolerância à seca. A inovação resiliente para a Amazônia é seu consórcio com o Amendoim Forrageiro. Esta leguminosa (Arachis pintoi) se adapta bem aos solos amazônicos, fixa nitrogênio, enriquecendo o solo e reduzindo a necessidade de fertilizantes, e melhora a qualidade da dieta do gado. A cultivar BRS Oquira de amendoim forrageiro é especialmente indicada, pois apresenta maior tolerância à seca e se recupera vigorosamente após o período seco. Essa combinação cria um sistema mais sustentável e resiliente, melhorando a saúde do solo e a produtividade.
+
+3. Bioma Pampa
+O Pampa, caracterizado por suas pastagens nativas, enfrenta projeções de verões mais quentes e secos, e eventos de chuvas torrenciais que podem causar erosão. A estratégia mais resiliente é a valorização e o uso de suas espécies nativas e a introdução de forrageiras de inverno.
+
+Capim-Forquilha (Paspalum notatum): É uma das gramíneas nativas mais importantes do Pampa. Sua resiliência se deve à sua incrível capacidade de tolerar o pisoteio intenso e sua adaptação a diferentes condições de solo. Pesquisas indicam que cultivares como a Pensacola apresentam excelente taxa de crescimento nos meses mais quentes, sendo uma aposta para um cenário de temperaturas elevadas. O manejo adequado do campo nativo, com o Capim-Forquilha como base, mantém a biodiversidade do solo e a integridade do ecossistema, tornando-o mais resistente a extremos climáticos do que monoculturas exóticas.
+
+Aveia-Preta (Avena strigosa): A introdução de pastagens anuais de inverno é fundamental para garantir forragem de qualidade durante o período mais frio e reduzir a pressão sobre o campo nativo. A Aveia-Preta é uma excelente opção por sua adaptabilidade ao clima do Pampa e alto potencial de produção de forragem de qualidade. Cultivares desenvolvidas pela Embrapa, como a BRS Pampeana, mostram desempenho superior, com alta capacidade de rebrota após o pastejo e ciclo estendido, garantindo pasto por mais tempo. Em um cenário de mudanças climáticas, ela permite a produção de carne e leite mesmo em invernos com geadas ou variações de temperatura, compondo um sistema de produção resiliente ao longo de todo o ano.
+
+4. Bioma Caatinga
+O semiárido é o bioma mais vulnerável ao aumento da aridez e a longos períodos de seca. A resiliência aqui é sinônimo de extrema tolerância à falta de água e aproveitamento de fontes de alimento não convencionais.
+
+Capim Buffel (Cenchrus ciliaris): Considerada a principal gramínea para as zonas semiáridas, o Capim Buffel é de origem africana e indiana, mas plenamente adaptado à Caatinga. Sua principal característica é a extraordinária resistência à seca, sendo capaz de sobreviver a longos períodos de estiagem e rebrotar rapidamente com as primeiras chuvas. É uma forrageira com bom valor nutricional para ruminantes em uma região onde as opções são escassas.
+
+Gliricídia (Gliricidia sepium) em Bancos de Proteína: A Gliricídia não é uma pastagem, mas uma leguminosa arbórea fundamental para a resiliência na Caatinga. Cultivada nos chamados "bancos de proteína", ela serve como suplemento alimentar estratégico para o rebanho durante a seca. A Gliricídia tem alta capacidade de produção de biomassa (folhas e talos finos) rica em proteína, mesmo em condições de estresse hídrico. A sua utilização aumenta a produtividade animal e a sustentabilidade do sistema, reduzindo os custos com rações concentradas.
+
+5. Bioma Pantanal
+A característica que define o Pantanal é o ciclo de cheias e secas. As mudanças climáticas tendem a intensificar esses extremos. Portanto, as pastagens devem ser tolerantes tanto ao alagamento prolongado quanto à seca subsequente.
+
+Capim-Tanner (Brachiaria arrecta): Também conhecida como braquiária-do-brejo, esta forrageira de origem africana é encontrada naturalmente em locais encharcados. Sua principal adaptação é a alta tolerância ao alagamento, podendo suportar longos períodos submersa. Essa característica a torna ideal para as áreas mais baixas do Pantanal, garantindo forragem disponível mesmo durante o período das cheias.
+
+Capim Mimoso (Hymenachne amplexicaulis): Esta é uma gramínea nativa do Pantanal, conhecida localmente como "capim-de-capivara". Ela é perfeitamente adaptada ao ciclo das águas, crescendo vigorosamente em áreas alagadas. Estudos da Embrapa Pantanal a destacam como uma forrageira de boa qualidade nutricional, sendo preferida pelo gado. Utilizar uma espécie nativa como o Capim Mimoso é uma estratégia de alta resiliência, pois ela está em total sincronia com o ecossistema local e sua dinâmica de pulsos de inundação.
+
+6. Bioma Mata Atlântica
+Este bioma apresenta grande variação de relevo, solo e clima, mas comumente possui solos ácidos e áreas de morraria. As mudanças climáticas podem intensificar chuvas, aumentando o risco de erosão, e elevar as temperaturas.
+
+Capim Mombaça (Megathyrsus maximus cv. Mombaça): Para as áreas de várzea e de maior fertilidade na Mata Atlântica, o Capim Mombaça é uma excelente opção. Ele possui um potencial de produção de matéria seca muito elevado e boa qualidade nutricional. Sua adaptação para um futuro mais quente está em sua alta produtividade, que, sob manejo intensivo e rotacionado, permite maior produção em menor área, liberando terras para outras culturas ou para a restauração florestal. Contudo, exige solos bem drenados e férteis para expressar seu potencial.
+
+Amendoim Forrageiro (Arachis pintoi) em Consórcio: Mais do que uma pastagem única, a estratégia mais resiliente para a Mata Atlântica é a consorciação de gramíneas com o Amendoim Forrageiro. Esta leguminosa tem uma capacidade notável de adaptação, desenvolvendo-se bem em solos de média fertilidade e tolerando encharcamento temporário. Ao ser plantada junto com capins como o Mombaça ou Braquiárias, ela protege o solo contra a erosão (essencial em áreas de morro), fixa nitrogênio atmosférico, diminuindo a necessidade de adubação, e eleva o teor de proteína da dieta do gado. A cultivar BRS Oquira é especificamente recomendada pela Embrapa para este bioma.
