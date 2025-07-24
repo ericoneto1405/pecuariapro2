@@ -1,35 +1,30 @@
 [
   {
     "id": 1,
-    "nome": "Frigorífico Progresso",
-    "regiao": "Centro-Oeste",
-    "perfil": "À vista e Barter",
-    "preco_arroba": 250,
-    "pagamento": ["À vista", "Barter"],
-    "bonificacoes": ["Novilho precoce", "Rastreabilidade"],
-    "descricao": "Paga à vista, preço menor, opção de barter (insumos). Saúde financeira estável.",
-    "requisitos": []
+    "nome": "Frigorífico Boi Forte",
+    "localizacao": "Barretos - SP",
+    "capacidade": 1200,
+    "status": "Ativo"
   },
   {
     "id": 2,
-    "nome": "Frigorífico Capital",
-    "regiao": "Sudeste",
-    "perfil": "A prazo (30/60 dias)",
-    "preco_arroba": 270,
-    "pagamento": ["30 dias", "60 dias"],
-    "bonificacoes": [],
-    "descricao": "Paga mais caro, mas só a prazo. Precisa de capital, pode atrasar pagamentos.",
-    "requisitos": []
+    "nome": "Frigorífico Pampa",
+    "localizacao": "Alegrete - RS",
+    "capacidade": 900,
+    "status": "Ativo"
   },
   {
     "id": 3,
-    "nome": "Frigorífico Premium",
-    "regiao": "Sul",
-    "perfil": "Nicho Premium/Exportação",
-    "preco_arroba": 300,
-    "pagamento": ["À vista", "30 dias"],
-    "bonificacoes": ["Raça premium", "Acabamento de gordura", "Idade jovem"],
-    "descricao": "Prêmios para animais jovens, raças premium, acabamento, rastreabilidade. Exige requisitos rigorosos.",
-    "requisitos": ["Raça premium", "Idade < 24 meses", "Acabamento de gordura"]
+    "nome": "Frigorífico Sertanejo",
+    "localizacao": "Goiânia - GO",
+    "capacidade": 1100,
+    "status": "Ativo"
+  },
+  {
+    "id": 4,
+    "nome": "Frigorífico Pantanal",
+    "localizacao": "Cuiabá - MT",
+    "capacidade": 1000,
+    "status": "Ativo"
   }
-] 
+]

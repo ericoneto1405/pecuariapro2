@@ -1,8 +1,6 @@
 Perfeito\! Nome definido. Isso dá identidade ao projeto.
 
-Vou atualizar o blueprint técnico para refletir o nome oficial do jogo, **PECUARIAPRO2**. Isso é importante para que o Cursor AI e qualquer desenvolvedor utilize os nomes corretos para os repositórios, pastas e arquivos.
-
-Aqui está o documento Markdown revisado e finalizado:
+OFFLIAqui está o documento Markdown revisado e finalizado:
 
 -----
 

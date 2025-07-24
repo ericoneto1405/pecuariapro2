@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getAllNPCStates, interactWithNPC } from '../api/npcService';
+import { getAllNPCStates, interactWithNPC, triggerThoughtCycle } from '../api/npcService';
 
 const useNPCStore = create((set, get) => ({
   npcs: {},
@@ -11,8 +11,8 @@ const useNPCStore = create((set, get) => ({
     try {
       const data = await getAllNPCStates();
       set({ npcs: data, loading: false });
-    } catch (err) {
-      set({ error: err.message, loading: false });
+    } catch (error) {
+      set({ error, loading: false });
     }
   },
 
@@ -20,7 +20,6 @@ const useNPCStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const response = await interactWithNPC(npc_id, player_dialogue);
-      // Atualiza apenas o NPC interagido
       set(state => ({
         npcs: {
           ...state.npcs,
@@ -32,9 +31,30 @@ const useNPCStore = create((set, get) => ({
         loading: false
       }));
       return response;
-    } catch (err) {
-      set({ error: err.message, loading: false });
-      throw err;
+    } catch (error) {
+      set({ error, loading: false });
+      return null;
+    }
+  },
+
+  think: async (npc_id, world_context = {}, task_description) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await triggerThoughtCycle(npc_id, world_context, task_description);
+      set(state => ({
+        npcs: {
+          ...state.npcs,
+          [npc_id]: {
+            ...state.npcs[npc_id],
+            ...response
+          }
+        },
+        loading: false
+      }));
+      return response;
+    } catch (error) {
+      set({ error, loading: false });
+      return null;
     }
   }
 }));

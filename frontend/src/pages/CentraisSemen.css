@@ -1,0 +1,121 @@
+.central-semen-container {
+  max-width: 900px;
+  margin: 32px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 32px 24px;
+}
+.central-semen-container h1 {
+  font-size: 2rem;
+  margin-bottom: 24px;
+  color: #2d3a4a;
+}
+.central-semen-content {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+.central-semen-filtros {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.central-semen-filtros label {
+  font-size: 1rem;
+  color: #444;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.central-semen-filtros input {
+  padding: 8px 12px;
+  border: 1px solid #d0d6dd;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f7f7fa;
+}
+.central-semen-filtros button {
+  padding: 8px 0;
+  border: none;
+  border-radius: 6px;
+  background: #bfc9d9;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: not-allowed;
+}
+.central-semen-lista {
+  flex: 1;
+  min-height: 180px;
+  background: #f7f7fa;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.central-semen-placeholder {
+  color: #888;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.central-semen-doses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: flex-start;
+}
+.dose-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 18px 16px 16px 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  min-width: 320px;
+  max-width: 350px;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.dose-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f7f7fa;
+  border: 1px solid #e0e0e0;
+}
+.dose-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dose-info h3 {
+  margin: 0 0 2px 0;
+  font-size: 1.1rem;
+  color: #2d3a4a;
+}
+.dose-raca {
+  font-size: 0.95rem;
+  color: #4a6fa1;
+  font-weight: 600;
+}
+.dose-registro, .dose-cor, .dose-mocho {
+  font-size: 0.92rem;
+  color: #888;
+}
+.dose-desc {
+  font-size: 0.97rem;
+  color: #444;
+  margin: 4px 0 0 0;
+}
+.dose-preco {
+  font-size: 1.05rem;
+  color: #1a7e3c;
+  font-weight: 700;
+  margin-top: 4px;
+}

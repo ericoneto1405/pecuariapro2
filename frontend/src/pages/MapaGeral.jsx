@@ -175,37 +175,41 @@ function MapaGeral() {
               <p><b>Potencial UA/ha:</b> {fazenda.potencial_base_ha}</p>
               <p><b>Produtividade real/ha:</b> {fazenda.produtividade_real_ha}</p>
               {climaLoading && <div style={{color:'#b0bec5'}}>Carregando clima...</div>}
-              {!climaLoading && climas[fazenda.id] && (
-                <div style={{marginTop:8, background:'#23272f', borderRadius:6, padding:8, display:'flex', alignItems:'center', gap:8}}>
-                  {(() => {
-                    const desc = climas[fazenda.id].descricao?.toLowerCase() || '';
-                    let label = 'Clima indefinido';
-                    let emoji = '❓';
-                    if (desc.includes('chuva')) { label = 'Chuva'; emoji = '🌧️'; }
-                    else if (desc.includes('nublado')) { label = 'Nublado'; emoji = '☁️'; }
-                    else if (desc.includes('sol') || desc.includes('céu limpo')) { label = 'Ensolarado'; emoji = '☀️'; }
-                    else if (desc.includes('neblina')) { label = 'Neblina'; emoji = '🌫️'; }
-                    else if (desc.includes('tempestade')) { label = 'Tempestade'; emoji = '⛈️'; }
-                    else if (desc.includes('neve')) { label = 'Neve'; emoji = '❄️'; }
-                    else if (desc.includes('garoa')) { label = 'Garoa'; emoji = '🌦️'; }
-                    else if (desc.includes('vento')) { label = 'Ventania'; emoji = '💨'; }
-                    else if (desc.includes('trovão')) { label = 'Trovoada'; emoji = '🌩️'; }
-                    return (
-                      <>
-                        <span style={{fontSize:22}}>{emoji}</span>
-                        <span><b>{label}</b> <span style={{color:'#b0bec5'}}>({climas[fazenda.id].descricao})</span></span>
-                        <span style={{marginLeft:8}}><b>{climas[fazenda.id].temperatura}°C</b></span>
-                        {climas[fazenda.id].icone && (
-                          <img src={`https://openweathermap.org/img/wn/${climas[fazenda.id].icone}.png`} alt="" style={{verticalAlign:'middle',marginLeft:4}} />
-                        )}
-                      </>
-                    );
-                  })()}
-                </div>
+              {!climaLoading && (
+                climas[fazenda.id] ? (
+                  <div style={{marginTop:8, background:'#23272f', borderRadius:6, padding:8, display:'flex', alignItems:'center', gap:8}}>
+                    {(() => {
+                      const desc = climas[fazenda.id].descricao?.toLowerCase() || '';
+                      let label = 'Clima indefinido';
+                      let emoji = '❓';
+                      if (desc.includes('chuva')) { label = 'Chuva'; emoji = '🌧️'; }
+                      else if (desc.includes('nublado')) { label = 'Nublado'; emoji = '☁️'; }
+                      else if (desc.includes('sol') || desc.includes('céu limpo')) { label = 'Ensolarado'; emoji = '☀️'; }
+                      else if (desc.includes('neblina')) { label = 'Neblina'; emoji = '🌫️'; }
+                      else if (desc.includes('tempestade')) { label = 'Tempestade'; emoji = '⛈️'; }
+                      else if (desc.includes('neve')) { label = 'Neve'; emoji = '❄️'; }
+                      else if (desc.includes('garoa')) { label = 'Garoa'; emoji = '🌦️'; }
+                      else if (desc.includes('vento')) { label = 'Ventania'; emoji = '💨'; }
+                      else if (desc.includes('trovão')) { label = 'Trovoada'; emoji = '🌩️'; }
+                      return (
+                        <>
+                          <span style={{fontSize:22}}>{emoji}</span>
+                          <span><b>{label}</b> <span style={{color:'#b0bec5'}}>({climas[fazenda.id].descricao})</span></span>
+                          <span style={{marginLeft:8}}><b>{climas[fazenda.id].temperatura}°C</b></span>
+                          {climas[fazenda.id].icone && (
+                            <img src={`https://openweathermap.org/img/wn/${climas[fazenda.id].icone}.png`} alt="" style={{verticalAlign:'middle',marginLeft:4}} />
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
+                ) : (
+                  <div style={{marginTop:8, background:'#23272f', borderRadius:6, padding:8, color:'#e53935', fontWeight:600}}>
+                    Clima indisponível
+                  </div>
+                )
               )}
-              {!semDono && (
-                <p><b>Dono:</b> {fazenda.dono}</p>
-              )}
+              <p><b>Dono:</b> {semDono ? 'DISPONÍVEL' : fazenda.dono}</p>
               {semDono && (
                 <p style={{ color: '#00e676', fontWeight: 600 }}><b>Valor:</b> R$ {fazenda.valor_total_dinamico.toLocaleString('pt-BR')}</p>
               )}

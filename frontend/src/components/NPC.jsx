@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
 import useNPCStore from '../state/useNPCStore';
 
-const NPC = ({ npc }) => {
-  const { interact, loading } = useNPCStore();
-  const [dialogue, setDialogue] = useState('');
+const NPC = ({ npcId }) => {
+  const { npcs, interact, loading } = useNPCStore();
+  const npc = npcs[npcId];
   const [response, setResponse] = useState('');
   const [sending, setSending] = useState(false);
 
+  if (!npc) return <div>NPC não encontrado</div>;
+
   const handleInteract = async () => {
-    if (!dialogue.trim()) return;
-    setSending(true);
-    setResponse('');
-    try {
-      const res = await interact(npc.id, dialogue);
-      setResponse(res.dialogue || res.current_dialogue || '(Sem resposta)');
-    } catch (err) {
-      setResponse('Erro ao interagir');
+    const mensagem = prompt('Fale com o NPC:');
+    if (mensagem) {
+      setSending(true);
+      setResponse('');
+      try {
+        const res = await interact(npcId, mensagem);
+        setResponse(res.dialogue || res.current_dialogue || '(Sem resposta)');
+      } catch (err) {
+        setResponse('Erro ao interagir');
+      }
+      setSending(false);
     }
-    setSending(false);
   };
 
   return (
@@ -26,16 +30,8 @@ const NPC = ({ npc }) => {
       <div>Humor: {npc.mood}</div>
       <div>Ação: {npc.current_action?.type}</div>
       <div style={{ margin: '8px 0' }}>
-        <input
-          type="text"
-          value={dialogue}
-          onChange={e => setDialogue(e.target.value)}
-          placeholder="Fale com o NPC..."
-          disabled={sending || loading}
-          style={{ width: '100%' }}
-        />
-        <button onClick={handleInteract} disabled={sending || loading || !dialogue.trim()} style={{ marginTop: 4 }}>
-          {sending ? 'Enviando...' : 'Enviar'}
+        <button onClick={handleInteract} disabled={sending || loading}>
+          {sending ? 'Enviando...' : 'Interagir'}
         </button>
       </div>
       {/* Mostra resposta local ou diálogo atual do NPC */}
