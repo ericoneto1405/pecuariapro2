@@ -23,8 +23,16 @@ export default function Header() {
         <span className="logo">PECUÁRIA PRO</span>
       </div>
       <div className="header-center">
-        <span className="header-date">{dataAtualJogo.toLocaleDateString('pt-BR')}</span>
-        <span className="header-clock">{dataAtualJogo.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+        <span className="header-date">
+          {dataAtualJogo instanceof Date && !isNaN(dataAtualJogo)
+            ? dataAtualJogo.toLocaleDateString('pt-BR')
+            : '--/--/----'}
+        </span>
+        <span className="header-clock">
+          {dataAtualJogo instanceof Date && !isNaN(dataAtualJogo)
+            ? dataAtualJogo.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+            : '--:--:--'}
+        </span>
       </div>
       <div className="header-right">
         <div className="speed-controls">
