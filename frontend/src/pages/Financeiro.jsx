@@ -1,26 +1,19 @@
 import { useState, useEffect } from 'react';
+import { Pie, Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+} from 'chart.js';
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
+
 import { getReceitas, getDespesas, getFazendasJogador, getDRE } from '../api/financeiroService';
 
-const ABAS = [
-  { id: 'dashboard', label: 'DASHBOARD' },
-  { id: 'receitas', label: 'RECEITAS' },
-  { id: 'despesas', label: 'DESPESAS' },
-  { id: 'fluxo', label: 'FLUXO DE CAIXA' },
-  { id: 'dre', label: 'DRE' },
-];
 
-// Mock de categorias cadastradas
-const CATEGORIAS = [
-  'Venda de Gado',
-  'Venda de Leite',
-  'Arrendamento',
-  'Outros',
-  'Ração',
-  'Veterinário',
-  'Funcionários',
-  'Energia',
-  'Impostos',
-];
 
 
 function getMonthYear(dateStr) {
@@ -30,6 +23,14 @@ function getMonthYear(dateStr) {
 
 
 function Financeiro() {
+  // Definição das abas (mantendo o layout original)
+  const ABAS = [
+    { id: 'dashboard', label: 'DASHBOARD' },
+    { id: 'receitas', label: 'RECEITAS' },
+    { id: 'despesas', label: 'DESPESAS' },
+    { id: 'fluxo', label: 'FLUXO DE CAIXA' },
+    { id: 'dre', label: 'DRE' },
+  ];
   const [aba, setAba] = useState('dashboard');
   const [dataInicial, setDataInicial] = useState('2025-07-01');
   const [dataFinal, setDataFinal] = useState('2025-07-31');
@@ -54,7 +55,14 @@ function Financeiro() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  // CATEGORIAS dinâmicas (todas categorias encontradas em receitas e despesas)
+  const CATEGORIAS = Array.from(new Set([
+    ...receitas.map(r => r.categoria),
+    ...despesas.map(d => d.categoria)
+  ].filter(Boolean)));
+
+  // Função para carregar dados financeiros
+  const carregarDadosFinanceiros = () => {
     setLoading(true);
     Promise.all([
       getReceitas(),
@@ -63,62 +71,90 @@ function Financeiro() {
       getDRE()
     ])
       .then(([receitasData, despesasData, fazendasData, dreData]) => {
-        setReceitas(receitasData);
-        setDespesas(despesasData);
-        setFazendasJogador(fazendasData);
-        setDreCategorias(dreData);
+        setReceitas(Array.isArray(receitasData) ? receitasData : (receitasData.receitas || []));
+        setDespesas(Array.isArray(despesasData) ? despesasData : (despesasData.despesas || []));
+        setFazendasJogador(Array.isArray(fazendasData) ? fazendasData : (fazendasData.fazendas_jogador || []));
+        setDreCategorias(Array.isArray(dreData) ? dreData : (dreData.dre_categorias || []));
         setLoading(false);
       })
       .catch(() => {
         setError('Erro ao buscar dados financeiros do backend');
         setLoading(false);
       });
+  };
+
+  // Carrega dados na montagem do componente
+  useEffect(() => {
+    carregarDadosFinanceiros();
   }, []);
 
-  // Filtros para receitas
+  // Atualiza dados a cada 5 segundos para capturar novas vendas
+  useEffect(() => {
+    const interval = setInterval(() => {
+      carregarDadosFinanceiros();
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+
+  // Filtros e KPIs de receitas (apenas dados reais)
   const receitasFiltradas = receitas.filter(r => {
     const dataOk = (!dataInicial || r.data >= dataInicial) && (!dataFinal || r.data <= dataFinal);
-    const buscaOk = !busca || r.descricao.toLowerCase().includes(busca.toLowerCase());
+    const buscaOk = !busca || r.descricao?.toLowerCase().includes(busca.toLowerCase());
     const categoriaOk = !categoria || r.categoria === categoria;
     const statusOk = status === 'Todas' || r.status === status;
     return dataOk && buscaOk && categoriaOk && statusOk;
   });
-
-  // KPIs receitas
   const totalRecebido = receitasFiltradas.filter(r => r.status === 'Recebida').reduce((acc, r) => acc + r.valor, 0);
   const totalAReceber = receitasFiltradas.filter(r => r.status === 'A Receber').reduce((acc, r) => acc + r.valor, 0);
   const totalReceitas = receitasFiltradas.reduce((acc, r) => acc + r.valor, 0);
 
-  // Filtros para despesas
+  // Filtros e KPIs de despesas (apenas dados reais)
   const despesasFiltradas = despesas.filter(d => {
     const dataOk = (!dataInicialDesp || d.vencimento >= dataInicialDesp) && (!dataFinalDesp || d.vencimento <= dataFinalDesp);
-    const buscaOk = !buscaDesp || d.descricao.toLowerCase().includes(buscaDesp.toLowerCase());
+    const buscaOk = !buscaDesp || d.descricao?.toLowerCase().includes(buscaDesp.toLowerCase());
     const categoriaOk = !categoriaDesp || d.categoria === categoriaDesp;
     const statusOk = statusDesp === 'Todas' || d.status === statusDesp;
     return dataOk && buscaOk && categoriaOk && statusOk;
   });
-
-  // KPIs despesas
   const totalPago = despesasFiltradas.filter(d => d.status === 'Paga').reduce((acc, d) => acc + d.valor, 0);
   const totalAPagar = despesasFiltradas.filter(d => d.status === 'A Pagar').reduce((acc, d) => acc + d.valor, 0);
   const totalDespesas = despesasFiltradas.reduce((acc, d) => acc + d.valor, 0);
 
-  // FLUXO DE CAIXA
-  const receitasFluxo = receitas.filter(r => r.data >= dataInicialFluxo && r.data <= dataFinalFluxo);
-  const despesasFluxo = despesas.filter(d => d.vencimento >= dataInicialFluxo && d.vencimento <= dataFinalFluxo);
+  // Gráfico de pizza de despesas por categoria (apenas dados reais)
+  const despesasPorCategoria = despesasFiltradas.reduce((acc, d) => {
+    if (!acc[d.categoria]) acc[d.categoria] = 0;
+    acc[d.categoria] += d.valor;
+    return acc;
+  }, {});
+  const pieLabels = Object.keys(despesasPorCategoria);
+  const pieData = Object.values(despesasPorCategoria);
+  const pieColors = [
+    '#e53935', '#1976d2', '#00e676', '#e6c200', '#8e24aa', '#ff7043', '#43a047', '#fbc02d', '#3949ab', '#00838f'
+  ];
+  const pieChartData = {
+    labels: pieLabels,
+    datasets: [
+      {
+        data: pieData,
+        backgroundColor: pieColors.slice(0, pieLabels.length),
+        borderWidth: 1,
+      },
+    ],
+  };
 
-  // KPIs Fluxo de Caixa
+  // FLUXO DE CAIXA (apenas dados reais)
+  const receitasFluxo = receitas.filter(r => r.data >= dataInicialFluxo && r.data <= dataFinalFluxo && r.status === 'Recebida');
+  const despesasFluxo = despesas.filter(d => d.vencimento >= dataInicialFluxo && d.vencimento <= dataFinalFluxo && d.status === 'Paga');
   const totalReceitasFluxo = receitasFluxo.reduce((acc, r) => acc + r.valor, 0);
   const totalDespesasFluxo = despesasFluxo.reduce((acc, d) => acc + d.valor, 0);
   const saldoLiquido = totalReceitasFluxo - totalDespesasFluxo;
-
-  // Agrupar movimentações por data
   const datasSet = new Set([
     ...receitasFluxo.map(r => r.data),
     ...despesasFluxo.map(d => d.vencimento)
   ]);
   const datas = Array.from(datasSet).sort();
-
   let subtotal = 0;
   const movimentacoes = datas.map(data => {
     const receitasDia = receitasFluxo.filter(r => r.data === data).reduce((acc, r) => acc + r.valor, 0);
@@ -132,15 +168,70 @@ function Financeiro() {
     };
   });
 
-  // DRE
-  const totalReceitaDre = dreCategorias.reduce((acc, c) => acc + c.receita, 0);
-  const totalDespesaDre = dreCategorias.reduce((acc, c) => acc + c.despesa, 0);
+  // DRE (apenas dados reais)
+  const totalReceitaDre = dreCategorias.reduce((acc, c) => acc + (c.receita || 0), 0);
+  const totalDespesaDre = dreCategorias.reduce((acc, c) => acc + (c.despesa || 0), 0);
   const lucroLiquido = totalReceitaDre - totalDespesaDre;
 
-  // Placeholders para valores do dashboard (mantendo lógica original)
-  const saldoAtual = 15000;
-  const receitasMes = receitas.filter(r => getMonthYear(r.data) === mesAno).reduce((acc, r) => acc + r.valor, 0);
-  const despesasMes = despesas.filter(d => getMonthYear(d.vencimento) === mesAno).reduce((acc, d) => acc + d.valor, 0);
+  // KPIs reais do dashboard
+  const saldoAtual = receitas.reduce((acc, r) => acc + (r.status === 'Recebida' ? r.valor : 0), 0)
+    - despesas.reduce((acc, d) => acc + (d.status === 'Paga' ? d.valor : 0), 0);
+  const receitasMes = receitas.filter(r => getMonthYear(r.data) === mesAno && r.status === 'Recebida').reduce((acc, r) => acc + r.valor, 0);
+  const despesasMes = despesas.filter(d => getMonthYear(d.vencimento) === mesAno && d.status === 'Paga').reduce((acc, d) => acc + d.valor, 0);
+
+  // Gráfico de barras: Receitas vs. Despesas por mês
+  // Agrupa receitas e despesas por mês/ano (YYYY-MM)
+  const mesesSet = new Set([
+    ...receitas.map(r => getMonthYear(r.data)),
+    ...despesas.map(d => getMonthYear(d.vencimento))
+  ]);
+  const meses = Array.from(mesesSet).filter(Boolean).sort();
+  const receitasPorMes = meses.map(m => receitas.filter(r => getMonthYear(r.data) === m).reduce((acc, r) => acc + r.valor, 0));
+  const despesasPorMes = meses.map(m => despesas.filter(d => getMonthYear(d.vencimento) === m).reduce((acc, d) => acc + d.valor, 0));
+  const barChartData = {
+    labels: meses,
+    datasets: [
+      {
+        label: 'Receitas',
+        data: receitasPorMes,
+        backgroundColor: '#1976d2',
+        borderRadius: 6,
+      },
+      {
+        label: 'Despesas',
+        data: despesasPorMes,
+        backgroundColor: '#e53935',
+        borderRadius: 6,
+      },
+    ],
+  };
+  const barChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        labels: { color: '#b0bec5', font: { size: 14 } },
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const label = context.dataset.label || '';
+            const value = context.parsed.y || 0;
+            return `${label}: R$ ${value.toLocaleString('pt-BR')}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#b0bec5' },
+        grid: { color: '#313640' },
+      },
+      y: {
+        ticks: { color: '#b0bec5' },
+        grid: { color: '#313640' },
+      },
+    },
+  };
 
   if (loading) return <div style={{ color: '#b0bec5', padding: 32 }}>Carregando dados financeiros...</div>;
   if (error) return <div style={{ color: '#e53935', padding: 32 }}>{error}</div>;
@@ -186,7 +277,13 @@ function Financeiro() {
                 <div style={{ color: '#b0bec5', fontSize: 14 }}>Despesas do Mês (pagas)</div>
                 <div style={{ fontSize: 24, fontWeight: 600, color: '#e53935' }}>R$ {despesasMes.toLocaleString('pt-BR')}</div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'end' }}>
+              <div style={{ display: 'flex', alignItems: 'end', gap: 12 }}>
+                <button 
+                  onClick={carregarDadosFinanceiros}
+                  style={{ padding: '12px 20px', borderRadius: 8, background: '#00e676', color: '#fff', border: 'none', fontWeight: 600, fontSize: 16, cursor: 'pointer', marginTop: 16 }}
+                >
+                  🔄 Atualizar Dados
+                </button>
                 <button style={{ padding: '12px 20px', borderRadius: 8, background: '#1976d2', color: '#fff', border: 'none', fontWeight: 600, fontSize: 16, cursor: 'pointer', marginTop: 16 }}>
                   Cadastrar Categorias
                 </button>
@@ -196,7 +293,30 @@ function Financeiro() {
               <div style={{ flex: '1 1 320px', minWidth: 320, maxWidth: 480, background: '#181a1f', borderRadius: 12, padding: 24 }}>
                 <div style={{ marginBottom: 12, fontWeight: 600 }}>Despesas por Categoria</div>
                 <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b0bec5', background: '#23272f', borderRadius: 8 }}>
-                  [Gráfico Pizza Placeholder]
+                  {pieLabels.length > 0 ? (
+                    <Pie
+                      data={pieChartData}
+                      options={{
+                        plugins: {
+                          legend: {
+                            labels: { color: '#b0bec5', font: { size: 14 } },
+                            position: 'right',
+                          },
+                          tooltip: {
+                            callbacks: {
+                              label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                return `${label}: R$ ${value.toLocaleString('pt-BR')}`;
+                              }
+                            }
+                          }
+                        }
+                      }}
+                    />
+                  ) : (
+                    <span style={{ color: '#b0bec5' }}>[Sem dados de despesas]</span>
+                  )}
                 </div>
               </div>
               <div style={{ flex: '2 1 480px', minWidth: 320, background: '#181a1f', borderRadius: 12, padding: 24 }}>
@@ -212,7 +332,14 @@ function Financeiro() {
                   </label>
                 </div>
                 <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b0bec5', background: '#23272f', borderRadius: 8 }}>
-                  [Gráfico em Barras Placeholder]
+                  {meses.length > 0 ? (
+                    <Bar
+                      data={barChartData}
+                      options={barChartOptions}
+                    />
+                  ) : (
+                    <span style={{ color: '#b0bec5' }}>[Sem dados de receitas/despesas]</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -495,4 +622,4 @@ function Financeiro() {
   );
 }
 
-export default Financeiro; 
+export default Financeiro;

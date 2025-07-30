@@ -1,5 +1,13 @@
 import './MapaGeral.css';
 import { useState, useEffect } from 'react';
+import { getClimaParaFazendas } from '../api/climaService';
+
+import NPCMapLayer from '../components/NPCMapLayer';
+import FiltroMapa from '../components/FiltroMapa';
+import '../components/NPCMapLayer.css';
+
+
+
 function ModalFazenda({ aberta, fazenda, onFechar }) {
   if (!aberta || !fazenda) return null;
   const semDono = !fazenda.dono || fazenda.dono === 'Desconhecido';
@@ -40,44 +48,64 @@ function ModalFazenda({ aberta, fazenda, onFechar }) {
             <button style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 6, padding: '10px 22px', fontWeight: 700, fontSize: 16, cursor: 'pointer' }}>Negociar com NPC</button>
           </>
         )}
+        {/* Previsão do tempo removida temporariamente */}
       </div>
     </div>
   );
 }
-import fazendasData from '../data/fazendas_mapa_geral.json';
-import { getClimaParaFazendas } from '../api/climaService';
-
-const ORDENACOES = {
-  PADRAO: 'PADRAO',
-  TAMANHO_CRESC: 'TAMANHO_CRESC',
-  TAMANHO_DESC: 'TAMANHO_DESC',
-  VALOR_CRESC: 'VALOR_CRESC',
-  VALOR_DESC: 'VALOR_DESC',
-};
-
 
 function MapaGeral() {
-  const [ordenacao, setOrdenacao] = useState(ORDENACOES.PADRAO);
-  const [soDisponiveis, setSoDisponiveis] = useState(false);
   const [fazendas, setFazendas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [climas, setClimas] = useState({});
   const [climaLoading, setClimaLoading] = useState(false);
-  const [minhasFazendas, setMinhasFazendas] = useState(false);
-  const [biomaFiltro, setBiomaFiltro] = useState('');
-  const [ordemUA, setOrdemUA] = useState(''); // '' | 'asc' | 'desc'
   const [modalFazenda, setModalFazenda] = useState({ aberta: false, fazenda: null });
+  const [busca, setBusca] = useState('');
+  
+  // Novo estado de filtros
+  const [filtros, setFiltros] = useState({
+    bioma: '',
+    tamanhoMin: 0,
+    tamanhoMax: 10000,
+    valorMin: 0,
+    valorMax: 10000000,
+    soDisponiveis: false,
+    minhasFazendas: false
+  });
 
   useEffect(() => {
     setLoading(true);
-    try {
-      setFazendas(fazendasData);
-      setLoading(false);
-    } catch (err) {
-      setError('Erro ao carregar fazendas do arquivo local');
-      setLoading(false);
-    }
+    fetch('/src/data/fazendas_mapa_geral.json')
+      .then(res => {
+        if (!res.ok) throw new Error('Erro ao carregar fazendas do arquivo local');
+        return res.json();
+      })
+      .then(data => {
+        setFazendas(data);
+        
+        // Inicializar ranges dos filtros baseado nos dados
+        const tamanhos = data.map(f => f.tamanho_ha);
+        const valores = data.map(f => f.valor_total_dinamico);
+        const minTamanho = Math.min(...tamanhos);
+        const maxTamanho = Math.max(...tamanhos);
+        const minValor = Math.min(...valores);
+        const maxValor = Math.max(...valores);
+        
+        setFiltros(prev => ({
+          ...prev,
+          tamanhoMin: minTamanho,
+          tamanhoMax: maxTamanho,
+          valorMin: minValor,
+          valorMax: maxValor
+        }));
+        
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Erro ao carregar fazendas do arquivo local');
+        setLoading(false);
+      });
   }, []);
 
   // Buscar clima para todas as fazendas ao carregar
@@ -97,67 +125,46 @@ function MapaGeral() {
     }
   }, [fazendas]);
 
-  let fazendasFiltradas = fazendas;
-  if (soDisponiveis) {
-    fazendasFiltradas = fazendasFiltradas.filter(f => !f.dono || f.dono === 'Desconhecido');
-  }
-  if (minhasFazendas) {
-    fazendasFiltradas = fazendasFiltradas.filter(f => f.dono && f.dono.toLowerCase() === 'jogador');
-  }
-  if (biomaFiltro) {
-    fazendasFiltradas = fazendasFiltradas.filter(f => f.bioma === biomaFiltro);
-  }
-  if (ordemUA === 'asc') {
-    fazendasFiltradas = [...fazendasFiltradas].sort((a, b) => a.potencial_base_ha - b.potencial_base_ha);
-  } else if (ordemUA === 'desc') {
-    fazendasFiltradas = [...fazendasFiltradas].sort((a, b) => b.potencial_base_ha - a.potencial_base_ha);
-  } else if (ordenacao === ORDENACOES.TAMANHO_CRESC) {
-    fazendasFiltradas = [...fazendasFiltradas].sort((a, b) => a.tamanho_ha - b.tamanho_ha);
-  } else if (ordenacao === ORDENACOES.TAMANHO_DESC) {
-    fazendasFiltradas = [...fazendasFiltradas].sort((a, b) => b.tamanho_ha - a.tamanho_ha);
-  } else if (ordenacao === ORDENACOES.VALOR_CRESC) {
-    fazendasFiltradas = [...fazendasFiltradas].sort((a, b) => a.valor_total_dinamico - b.valor_total_dinamico);
-  } else if (ordenacao === ORDENACOES.VALOR_DESC) {
-    fazendasFiltradas = [...fazendasFiltradas].sort((a, b) => b.valor_total_dinamico - a.valor_total_dinamico);
-  }
+  // Nova lógica de filtragem
+  let fazendasFiltradas = fazendas.filter(fazenda => {
+    // Filtro de busca por nome ou município
+    if (busca) {
+      const termoBusca = busca.toLowerCase();
+      const nomeMatch = fazenda.nome.toLowerCase().includes(termoBusca);
+      const municipioMatch = fazenda.municipio_uf.toLowerCase().includes(termoBusca);
+      if (!nomeMatch && !municipioMatch) return false;
+    }
 
-  // Obter biomas únicos
-  const biomas = Array.from(new Set(fazendas.map(f => f.bioma))).filter(Boolean);
+    // Filtro por bioma
+    if (filtros.bioma && fazenda.bioma !== filtros.bioma) return false;
+
+    // Filtro por tamanho
+    if (fazenda.tamanho_ha < filtros.tamanhoMin || fazenda.tamanho_ha > filtros.tamanhoMax) return false;
+
+    // Filtro por valor
+    if (fazenda.valor_total_dinamico < filtros.valorMin || fazenda.valor_total_dinamico > filtros.valorMax) return false;
+
+    // Filtro por disponibilidade
+    if (filtros.soDisponiveis && (fazenda.dono && fazenda.dono !== 'Desconhecido')) return false;
+
+    // Filtro por minhas fazendas
+    if (filtros.minhasFazendas && (!fazenda.dono || fazenda.dono.toLowerCase() !== 'jogador')) return false;
+
+    return true;
+  });
 
   if (loading) return <div>Carregando fazendas...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <div>
-      <div style={{ marginBottom: 24, display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-        <span><b>Ordenar por:</b></span>
-        <button onClick={() => setOrdenacao(ORDENACOES.TAMANHO_CRESC)}>Tamanho ↑</button>
-        <button onClick={() => setOrdenacao(ORDENACOES.TAMANHO_DESC)}>Tamanho ↓</button>
-        <button onClick={() => setOrdenacao(ORDENACOES.VALOR_CRESC)}>Valor ↑</button>
-        <button onClick={() => setOrdenacao(ORDENACOES.VALOR_DESC)}>Valor ↓</button>
-        <button onClick={() => setOrdenacao(ORDENACOES.PADRAO)}>Padrão</button>
-        <label style={{ marginLeft: 24 }}>
-          <input type="checkbox" checked={soDisponiveis} onChange={e => setSoDisponiveis(e.target.checked)} /> Disponíveis para compra
-        </label>
-        <label style={{ marginLeft: 24 }}>
-          <input type="checkbox" checked={minhasFazendas} onChange={e => setMinhasFazendas(e.target.checked)} /> Minhas Fazendas
-        </label>
-        <label style={{ marginLeft: 24 }}>
-          Bioma:
-          <select value={biomaFiltro} onChange={e => setBiomaFiltro(e.target.value)} style={{ marginLeft: 8, background: '#181a1f', color: '#fff', border: '1px solid #313640', borderRadius: 4, padding: '4px 8px' }}>
-            <option value="">Todos</option>
-            {biomas.map(b => <option key={b} value={b}>{b}</option>)}
-          </select>
-        </label>
-        <label style={{ marginLeft: 24 }}>
-          Potencial UA/ha:
-          <select value={ordemUA} onChange={e => setOrdemUA(e.target.value)} style={{ marginLeft: 8, background: '#181a1f', color: '#fff', border: '1px solid #313640', borderRadius: 4, padding: '4px 8px' }}>
-            <option value="">-</option>
-            <option value="asc">Crescente</option>
-            <option value="desc">Decrescente</option>
-          </select>
-        </label>
-      </div>
+    <div style={{position:'relative'}}>
+      <FiltroMapa
+        filtros={filtros}
+        onFiltrosChange={setFiltros}
+        fazendas={fazendas}
+        onBuscaChange={setBusca}
+      />
+      <NPCMapLayer fazendas={fazendasFiltradas} />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px' }}>
         {fazendasFiltradas.map(fazenda => {
           const semDono = !fazenda.dono || fazenda.dono === 'Desconhecido';
@@ -222,4 +229,4 @@ function MapaGeral() {
   );
 }
 
-export default MapaGeral; 
+export default MapaGeral;

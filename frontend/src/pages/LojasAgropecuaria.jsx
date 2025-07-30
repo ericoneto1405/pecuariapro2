@@ -40,6 +40,20 @@ const LOJAS = [
       { nome: 'Projeto Confinamento - 5.000 animais', especie: '', preco: 5000000, unidade: 'projeto' },
       { nome: 'Bebedouro de concreto para 350 litros', especie: '', preco: 800, unidade: 'unidade', detalhe: '' },
       { nome: 'Cocho para Ração ou Sal (coberto, capacidade 400kg.)', especie: '', preco: 3000, unidade: 'unidade', detalhe: '' },
+      {
+        nome: 'Balança Mecânica',
+        especie: '',
+        preco: 5034.05,
+        unidade: 'unidade',
+        detalhe: 'Uma balança mecânica é um equipamento que mensura o peso e o exibe em um formato analógico; Sua maior vantagem é que não precisa de energia elétrica nem de bateria para funcionar. Cada balança pode ser comprada para ser utilizada em uma fazenda.'
+      },
+      {
+        nome: 'Balança Digital',
+        especie: '',
+        preco: 2297,
+        unidade: 'unidade',
+        detalhe: 'Visor com 6 dígitos grandes, LED luminoso multiuso (verde, amarelo, vermelho), bateria recarregável de íons de lítio (20h), fonte bivolt, cabo para bateria veicular 12V, botões LIGA/DESLIGA, VERIFICAR PESO, APAGAR ÚLTIMO PESO, ZERAR, teclado de membrana, estatísticas (nº de animais, peso médio, peso total), memória para sessões, conexão serial RS232 e bluetooth, display iluminado automático, rastreamento do zero, recurso de apagar último peso. Cada balança pode ser comprada para ser utilizada em uma fazenda.'
+      },
     ],
   },
   {

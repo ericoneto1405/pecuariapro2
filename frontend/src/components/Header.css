@@ -1,3 +1,4 @@
+
 .header {
   position: fixed;
   top: 0;
@@ -8,29 +9,34 @@
   color: #f4f4f4;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0 32px;
-  z-index: 100;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  z-index: 100;
 }
 
-.header-left .logo {
-  font-weight: bold;
-  font-size: 1.3rem;
-  letter-spacing: 1px;
-  color: #1976d2;
+
+
+.header-content {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .header-center {
   display: flex;
   align-items: center;
-  gap: 24px;
-  font-size: 1.1rem;
+  justify-content: center;
+  gap: 18px;
+  flex: 1;
 }
 
-.header-date {
-  font-weight: 500;
+.game-date {
+  font-size: 1.15rem;
   color: #b0bec5;
+  font-weight: 500;
 }
 
 .header-clock {
@@ -43,9 +49,44 @@
   margin-left: 4px;
 }
 
-.header-right .speed-controls {
+.header-title {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.header-title h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: #1976d2;
+  letter-spacing: 1px;
+}
+
+.game-date {
+  font-size: 1.05rem;
+  color: #b0bec5;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+
+.speed-controls {
+  display: flex;
+  align-items: center;
   gap: 8px;
+}
+
+
+/* Remover estilos antigos de header-left, header-center, header-date, header-clock */
+
+
+/* Garantir que o header não sobreponha a sidebar */
+.main-area {
+  display: flex;
+  margin-top: 60px;
+  position: relative;
+  z-index: 1;
 }
 
 .speed-btn {

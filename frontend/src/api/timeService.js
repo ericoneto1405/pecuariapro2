@@ -7,7 +7,12 @@ export const getGameTime = async () => {
   return response.data;
 };
 
-export const advanceGameTime = async (days = 1) => {
-  const response = await axios.post(`${API_URL}/advance_time`, { days });
+
+// Avança o tempo do jogo em segundos (preferencialmente), ou dias (legado)
+export const advanceGameTime = async ({ seconds = null, days = null } = {}) => {
+  const payload = {};
+  if (seconds !== null) payload.seconds = seconds;
+  if (days !== null) payload.days = days;
+  const response = await axios.post(`${API_URL}/advance_time`, payload);
   return response.data;
 };

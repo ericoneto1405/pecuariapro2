@@ -19,15 +19,163 @@ function CentraisSemen() {
   const [busca, setBusca] = useState("");
   const [filtradas, setFiltradas] = useState([]);
 
-  useEffect(() => {
-    getDosesSemen()
-      .then(data => {
-        setDoses(data);
-        setFiltradas(data);
-      })
-      .catch(err => setError('Erro ao carregar doses de sêmen.'))
-      .finally(() => setLoading(false));
-  }, []);
+useEffect(() => {
+  // Touros fixos por raça (sempre disponíveis)
+  const tourosFixos = [
+    // Angus Preto
+    {
+      id: 'angus1',
+      nome: 'Black Titan',
+      raca: 'Angus Preto',
+      registro: 'ANG-001',
+      cor: 'Preta',
+      mocho: true,
+      preco: 120,
+      imagem: '/img/touros/angus1.jpg',
+      descricao: 'Touro Angus Preto de alta performance, excelente marmoreio.'
+    },
+    {
+      id: 'angus2',
+      nome: 'Midnight King',
+      raca: 'Angus Preto',
+      registro: 'ANG-002',
+      cor: 'Preta',
+      mocho: true,
+      preco: 110,
+      imagem: '/img/touros/angus2.jpg',
+      descricao: 'Genética Angus para precocidade e ganho de peso.'
+    },
+    // Angus Vermelho
+    {
+      id: 'angusv1',
+      nome: 'Red Valor',
+      raca: 'Angus Vermelho',
+      registro: 'ANGV-001',
+      cor: 'Vermelha',
+      mocho: true,
+      preco: 115,
+      imagem: '/img/touros/angusv1.jpg',
+      descricao: 'Touro Angus Vermelho, rusticidade e fertilidade.'
+    },
+    {
+      id: 'angusv2',
+      nome: 'Fire Prime',
+      raca: 'Angus Vermelho',
+      registro: 'ANGV-002',
+      cor: 'Vermelha',
+      mocho: true,
+      preco: 112,
+      imagem: '/img/touros/angusv2.jpg',
+      descricao: 'Excelente marmoreio e adaptação ao calor.'
+    },
+    // Hereford
+    {
+      id: 'hereford1',
+      nome: 'White Face',
+      raca: 'Hereford Mocho',
+      registro: 'HER-001',
+      cor: 'Vermelha',
+      mocho: true,
+      preco: 105,
+      imagem: '/img/touros/hereford1.jpg',
+      descricao: 'Hereford Mocho, docilidade e fertilidade.'
+    },
+    {
+      id: 'hereford2',
+      nome: 'Classic Horn',
+      raca: 'Hereford Aspado',
+      registro: 'HER-002',
+      cor: 'Vermelha',
+      mocho: false,
+      preco: 100,
+      imagem: '/img/touros/hereford2.jpg',
+      descricao: 'Hereford tradicional, excelente para cruzamentos.'
+    },
+    // Charolês
+    {
+      id: 'charoles1',
+      nome: 'Charolais Power',
+      raca: 'Charolês Mocho',
+      registro: 'CHA-001',
+      cor: 'Branca',
+      mocho: true,
+      preco: 130,
+      imagem: '/img/touros/charoles1.jpg',
+      descricao: 'Charolês Mocho, alto rendimento de carcaça.'
+    },
+    {
+      id: 'charoles2',
+      nome: 'Ivory Horn',
+      raca: 'Charolês Aspado',
+      registro: 'CHA-002',
+      cor: 'Branca',
+      mocho: false,
+      preco: 125,
+      imagem: '/img/touros/charoles2.jpg',
+      descricao: 'Charolês tradicional, força e rusticidade.'
+    },
+    // Nelore
+    {
+      id: 'nelore1',
+      nome: 'Nelore Forte',
+      raca: 'Nelore Mocho',
+      registro: 'NEL-001',
+      cor: 'Branca',
+      mocho: true,
+      preco: 90,
+      imagem: '/img/touros/nelore1.jpg',
+      descricao: 'Nelore Mocho, rusticidade e adaptação tropical.'
+    },
+    {
+      id: 'nelore2',
+      nome: 'Nelore Raiz',
+      raca: 'Nelore Padrão',
+      registro: 'NEL-002',
+      cor: 'Branca',
+      mocho: false,
+      preco: 85,
+      imagem: '/img/touros/nelore2.jpg',
+      descricao: 'Nelore tradicional, resistência e longevidade.'
+    },
+    // Senepol
+    {
+      id: 'senepol1',
+      nome: 'Senepol Gold',
+      raca: 'Senepol',
+      registro: 'SEN-001',
+      cor: 'Vermelha',
+      mocho: true,
+      preco: 140,
+      imagem: '/img/touros/senepol1.jpg',
+      descricao: 'Senepol, pelo curto e alta fertilidade.'
+    },
+    {
+      id: 'senepol2',
+      nome: 'Red Heat',
+      raca: 'Senepol',
+      registro: 'SEN-002',
+      cor: 'Vermelha',
+      mocho: true,
+      preco: 138,
+      imagem: '/img/touros/senepol2.jpg',
+      descricao: 'Senepol, vigor híbrido e rusticidade.'
+    }
+  ];
+
+  getDosesSemen()
+    .then(data => {
+      const dosesArray = Array.isArray(data) ? data : (data.doses || []);
+      // Garante que os touros fixos sempre aparecem (sem duplicar se já vierem do backend)
+      const todos = [
+        ...tourosFixos.filter(tf => !dosesArray.some(d => d.id === tf.id)),
+        ...dosesArray
+      ];
+      setDoses(todos);
+      setFiltradas(todos);
+    })
+    .catch(err => setError('Erro ao carregar doses de sêmen.'))
+    .finally(() => setLoading(false));
+}, []);
 
   function handleFiltrar(e) {
     e.preventDefault();
@@ -71,15 +219,16 @@ function CentraisSemen() {
   return (
     <div className="central-semen-container">
       <h1>Central de Sêmen</h1>
-      <button
-        className="abrir-carrinho-btn"
-        style={{ position: 'absolute', top: 32, right: 32, zIndex: 10 }}
-        onClick={() => setCarrinhoAberto(true)}
-        disabled={itensCarrinho.length === 0}
-        title={itensCarrinho.length === 0 ? 'Adicione doses ao carrinho' : 'Abrir carrinho'}
-      >
-        🛒 Carrinho ({itensCarrinho.length})
-      </button>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '16px 0 0 0', zIndex: 10, position: 'relative' }}>
+        <button
+          className="abrir-carrinho-btn"
+          onClick={() => setCarrinhoAberto(true)}
+          disabled={itensCarrinho.length === 0}
+          title={itensCarrinho.length === 0 ? 'Adicione doses ao carrinho' : 'Abrir carrinho'}
+        >
+          🛒 Carrinho ({itensCarrinho.length})
+        </button>
+      </div>
       <CarrinhoSemenModal open={carrinhoAberto} onClose={() => setCarrinhoAberto(false)} onFinalizar={handleFinalizarCompra} />
       <div className="central-semen-content">
         <form className="central-semen-filtros" onSubmit={handleFiltrar}>

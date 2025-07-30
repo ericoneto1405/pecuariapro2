@@ -1,5 +1,6 @@
 
 import InstituicaoFinanceiraCard from '../components/InstituicaoFinanceiraCard';
+import { registrarEmprestimo, registrarParcelaEmprestimo } from '../api/financeiroService';
 
 // MOCK: Score do produtor (0-1000)
 const scoreRural = 780;
@@ -109,11 +110,12 @@ function BancosCooperativas() {
   const [modal, setModal] = useState({ aberta: false, instituicao: null });
   const [historico, setHistorico] = useState([]);
   // Lógica realista: SCORE, valor, linha de crédito
-  const handleSalvarSolicitacao = (dados) => {
+  const handleSalvarSolicitacao = async (dados) => {
     const id = Date.now();
     const score = scoreRural; // Poderia ser dinâmico por fazenda/jogador
     let aprovado = false;
     let motivo = '';
+    
     // Limites e regras por linha de crédito
     const limites = {
       'Pronaf': 80000,
@@ -125,6 +127,7 @@ function BancosCooperativas() {
       'Modernização': 100000,
     };
     const limiteLinha = limites[dados.linha] || 100000;
+    
     // SCORE influencia limite e aprovação
     if (score < 400) {
       aprovado = false;
@@ -138,6 +141,7 @@ function BancosCooperativas() {
     } else {
       aprovado = true;
     }
+    
     const novaSolicitacao = {
       ...dados,
       id,
@@ -146,7 +150,43 @@ function BancosCooperativas() {
       motivoRecusa: ''
     };
     setHistorico(h => [...h, novaSolicitacao]);
-    setTimeout(() => {
+    
+    setTimeout(async () => {
+      if (aprovado) {
+        try {
+          // Registra o empréstimo como receita no financeiro
+          const taxaMes = 0.012; // 1,2% ao mês
+          await registrarEmprestimo({
+            instituicao: dados.instituicao.nome,
+            valor: dados.valor,
+            linha: dados.linha,
+            parcelas: dados.parcelas,
+            taxaMes: taxaMes
+          });
+          
+          // Registra as parcelas como despesas futuras
+          const valorParcela = (dados.valor * taxaMes * Math.pow(1 + taxaMes, dados.parcelas)) / (Math.pow(1 + taxaMes, dados.parcelas) - 1);
+          const dataAtual = new Date();
+          
+          for (let i = 1; i <= dados.parcelas; i++) {
+            const dataVencimento = new Date(dataAtual);
+            dataVencimento.setMonth(dataVencimento.getMonth() + i);
+            
+            await registrarParcelaEmprestimo({
+              instituicao: dados.instituicao.nome,
+              valorParcela: valorParcela,
+              numeroParcela: i,
+              totalParcelas: dados.parcelas,
+              dataVencimento: dataVencimento.toISOString().slice(0, 10)
+            });
+          }
+          
+          console.log('✅ Empréstimo registrado no financeiro com sucesso!');
+        } catch (error) {
+          console.error('❌ Erro ao registrar empréstimo:', error);
+        }
+      }
+      
       setHistorico(h => h.map(s =>
         s.id === id
           ? aprovado

@@ -1,20 +1,29 @@
 import { create } from 'zustand';
 import { getAllNPCStates, interactWithNPC, triggerThoughtCycle } from '../api/npcService';
 
+// Dados reais virão do backend
 const useNPCStore = create((set, get) => ({
-  npcs: {},
+  npcs: [],
+  npcActions: {},
   loading: false,
   error: null,
 
   fetchNPCs: async () => {
     set({ loading: true, error: null });
     try {
-      const data = await getAllNPCStates();
-      set({ npcs: data, loading: false });
+      const response = await getAllNPCStates();
+      // O endpoint retorna { data_jogo, npcs_state }
+      const npcsData = response.npcs_state || {};
+      // Converter o objeto de NPCs em array para compatibilidade
+      const npcsArray = Object.values(npcsData);
+      set({ npcs: npcsArray, loading: false });
     } catch (error) {
-      set({ error, loading: false });
+      set({ error: error.message, loading: false });
     }
   },
+  setNPCAction: (npcId, action) => set(state => ({
+    npcActions: { ...state.npcActions, [npcId]: action }
+  })),
 
   interact: async (npc_id, player_dialogue) => {
     set({ loading: true, error: null });

@@ -1,0 +1,287 @@
+import { useState, useEffect } from 'react';
+import { emitirRomaneioPDF } from '../utils/pdfRomaneio';
+import { useLocation } from 'react-router-dom';
+import { registrarVendaFrigorifico } from '../api/vendaFrigorificoService';
+import FrigorificoCard from '../components/FrigorificoCard';
+import BarraRelacionamentoFrigorifico from '../components/BarraRelacionamentoFrigorifico';
+import { getArrobaManual } from '../api/arrobaManualService';
+import { getPrecoArroba } from '../api/arrobaService';
+import useGameTimeStore from '../state/useGameTimeStore';
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+
+// Dados de fallback caso o import falhe
+const FRIGORIFICOS_FALLBACK = [
+  {
+    id: 1,
+    nome: "Frigorífico Rei do Gado",
+    localizacao: "Barretos - SP",
+    capacidade: 1200,
+    status: "Ativo",
+    descricao: "Relacionamento com o Cliente: Este frigorífico prioriza a eficiência e a rapidez nas transações.",
+    pagamento: ["À vista (até 24h após abate e pesagem final da carcaça)"]
+  },
+  {
+    id: 2,
+    nome: "Frigorífico Terra Nova",
+    localizacao: "Alegrete - RS",
+    capacidade: 900,
+    status: "Ativo",
+    descricao: "Relacionamento com o Cliente: A filosofia aqui é a construção de uma parceria de longo prazo.",
+    pagamento: ["30 dias (possibilidade de adiantamento parcial com taxa de juros)", "Bonificações pagas semestralmente"]
+  }
+];
+
+// Tenta importar os frigoríficos, usa fallback se falhar
+let frigorificos = FRIGORIFICOS_FALLBACK;
+  console.error('Erro ao carregar frigoríficos:', error);
+  frigorificos = FRIGORIFICOS_FALLBACK;
+}
+
+function Frigorificos() {
+  const location = useLocation();
+  const loteSelecionado = location.state?.loteSelecionado || [];
+  const [confirmarVenda, setConfirmarVenda] = useState(false);
+  const [frigorificoEscolhido, setFrigorificoEscolhido] = useState(null);
+  const [pdfData, setPdfData] = useState(null);
+  const [selecionado, setSelecionado] = useState(null);
+  const [precoArroba, setPrecoArroba] = useState(null);
+  const [evolucaoPreco, setEvolucaoPreco] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [frigorificosData, setFrigorificosData] = useState(FRIGORIFICOS_FALLBACK);
+
+  // Debug: verificar se os frigoríficos estão sendo carregados
+  console.log('Frigoríficos carregados:', frigorificos);
+  console.log('Preço da arroba:', precoArroba);
+  console.log('Frigoríficos no estado:', frigorificosData);
+
+  // Usa a data do jogo do Zustand
+  const dataAtualJogo = useGameTimeStore(s => s.dataAtualJogo);
+  const dataJogo = dataAtualJogo ? dataAtualJogo.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+
+  // Carrega os frigoríficos
+  useEffect(() => {
+      console.error('Erro ao carregar frigoríficos, usando fallback:', error);
+      setFrigorificosData(FRIGORIFICOS_FALLBACK);
+    }
+  }, []);
+
+  // Carrega histórico salvo do localStorage
+  useEffect(() => {
+    const historicoSalvo = localStorage.getItem('evolucaoPrecoArroba');
+    if (historicoSalvo) {
+        console.error('Erro ao carregar histórico:', error);
+        setEvolucaoPreco([]);
+      }
+    }
+  }, []);
+
+  // Busca o valor da arroba (manual ou commodity)
+  useEffect(() => {
+    async function fetchPreco() {
+      setLoading(true);
+          console.log('Erro ao buscar preço commodity, tentando preço manual:', error);
+          // Se falhar, usa o preço manual
+          const dataManual = await getArrobaManual();
+          valor = Number(dataManual.arroba) || 0;
+          fonte = 'Manual';
+        }
+
+        setPrecoArroba(valor);
+
+        // Adiciona ao histórico apenas se for uma nova data ou se o preço mudou
+        const dataAtual = dataJogo;
+        const historicoAtual = evolucaoPreco;
+        const ultimoRegistro = historicoAtual[historicoAtual.length - 1];
+
+        // Verifica se já existe um registro para hoje
+        const registroHoje = historicoAtual.find(item => item.data === dataAtual);
+        
+        if (!registroHoje) {
+          // Adiciona novo registro
+          const novoHistorico = [...historicoAtual, { 
+            data: dataAtual, 
+            preco: valor,
+            fonte: fonte
+          }];
+          
+          // Mantém apenas os últimos 30 dias
+          const historicoLimitado = novoHistorico.slice(-30);
+          
+          setEvolucaoPreco(historicoLimitado);
+          localStorage.setItem('evolucaoPrecoArroba', JSON.stringify(historicoLimitado));
+        } else if (registroHoje.preco !== valor) {
+          // Atualiza o preço se mudou
+          const historicoAtualizado = historicoAtual.map(item => 
+            item.data === dataAtual ? { ...item, preco: valor, fonte: fonte } : item
+          );
+          setEvolucaoPreco(historicoAtualizado);
+          localStorage.setItem('evolucaoPrecoArroba', JSON.stringify(historicoAtualizado));
+        }
+      } catch (error) {
+        console.error('Erro ao buscar preço da arroba:', error);
+        setPrecoArroba(null);
+      }
+      setLoading(false);
+    }
+    fetchPreco();
+  }, [dataJogo, evolucaoPreco.length]);
+
+  // Gera dados de exemplo se não houver histórico
+  useEffect(() => {
+    if (evolucaoPreco.length === 0 && !loading) {
+      const hoje = new Date();
+      const dadosExemplo = [];
+      
+      // Gera 7 dias de dados de exemplo
+      for (let i = 6; i >= 0; i--) {
+        const data = new Date(hoje);
+        data.setDate(data.getDate() - i);
+        const dataFormatada = data.toLocaleDateString('pt-BR', { 
+          day: '2-digit', 
+          month: '2-digit', 
+          year: 'numeric' 
+        });
+        
+        // Preço base com variação realista
+        const precoBase = 320; // R$ 320/@
+        const variacao = (Math.random() - 0.5) * 20; // ±R$ 10
+        const preco = Math.round(precoBase + variacao);
+        
+        dadosExemplo.push({
+          data: dataFormatada,
+          preco: preco,
+          fonte: 'Simulado'
+        });
+      }
+      
+      setEvolucaoPreco(dadosExemplo);
+      localStorage.setItem('evolucaoPrecoArroba', JSON.stringify(dadosExemplo));
+    }
+  }, [evolucaoPreco.length, loading]);
+
+  return (
+    <div>
+      <div style={{ marginBottom: 32, background: '#23272f', borderRadius: 12, padding: 24 }}>
+        <h3 style={{ color: '#1976d2', margin: 0, marginBottom: 16 }}>Evolução do Preço da Arroba (R$)</h3>
+        {loading ? (
+          <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b0bec5' }}>
+            Carregando dados...
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={evolucaoPreco} margin={{ left: 8, right: 8, top: 8, bottom: 8 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="data" stroke="#b0bec5" />
+              <YAxis stroke="#b0bec5" domain={['auto', 'auto']} />
+              <Tooltip 
+                formatter={(value, name) => [`R$ ${value.toLocaleString('pt-BR', {minimumFractionDigits:2})}`, 'Preço']} 
+                labelStyle={{color:'#1976d2'}}
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                      <div style={{
+                        background: '#23272f',
+                        border: '1px solid #374151',
+                        borderRadius: '8px',
+                        padding: '12px',
+                        color: '#fff'
+                      }}>
+                        <p style={{ margin: '0 0 4px 0', color: '#1976d2', fontWeight: 'bold' }}>{label}</p>
+                        <p style={{ margin: '0 0 4px 0' }}>Preço: R$ {data.preco.toLocaleString('pt-BR', {minimumFractionDigits:2})}</p>
+                        <p style={{ margin: '0', color: '#b0bec5', fontSize: '12px' }}>Fonte: {data.fonte}</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Line type="monotone" dataKey="preco" stroke="#1976d2" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+        <div style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ color: '#b0bec5', fontSize: '14px' }}>
+            Preço atual: {precoArroba ? `R$ ${precoArroba.toLocaleString('pt-BR', {minimumFractionDigits:2})}` : 'Indisponível'}
+          </div>
+          <button 
+            onClick={() => {
+              localStorage.removeItem('evolucaoPrecoArroba');
+              setEvolucaoPreco([]);
+            }}
+            style={{
+              padding: '8px 16px',
+              background: '#374151',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '12px'
+            }}
+          >
+            Limpar Histórico
+          </button>
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
+        {/* Debug: versão simplificada */}
+        <div style={{ 
+          background: '#23272f', 
+          borderRadius: 12, 
+          padding: 32, 
+          marginBottom: 32,
+          minWidth: 420,
+          color: '#fff'
+        }}>
+          <h3>Debug: Frigoríficos</h3>
+          <p>Quantidade: {frigorificosData?.length || 0}</p>
+          <p>Preço arroba: {precoArroba || 'null'}</p>
+          <p>Loading: {loading ? 'true' : 'false'}</p>
+        </div>
+        
+        {(frigorificosData || []).map(f => (
+          <FrigorificoCard 
+            key={f.id} 
+            frigorifico={{
+              ...f, 
+              preco_arroba: precoArroba || 0
+            }} 
+            onSelecionar={() => {
+              if (loteSelecionado.length > 0) {
+                setFrigorificoEscolhido(f);
+                setConfirmarVenda(true);
+              } else {
+                setSelecionado(f.id);
+              }
+            }} 
+          />
+        ))}
+        {(!frigorificosData || frigorificosData.length === 0) && (
+          <div style={{ 
+            background: '#23272f', 
+            borderRadius: 12, 
+            padding: 32, 
+            color: '#b0bec5',
+            textAlign: 'center',
+            minWidth: 420 
+          }}>
+            <h3>Nenhum frigorífico encontrado</h3>
+            <p>Verifique se o arquivo de dados está sendo carregado corretamente.</p>
+          </div>
+        )}
+      </div>
+      {/* Confirmação e registro da venda do lote */}
+      {confirmarVenda && frigorificoEscolhido && (
+        <div style={{ position: 'fixed', top:0, left:0, width:'100vw', height:'100vh', background:'#0008', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <div style={{ background:'#23272f', borderRadius:12, padding:32, minWidth:320 }}>
+            <h3 style={{marginTop:0}}>Confirmar Venda para {frigorificoEscolhido.nome}</h3>
+            <div style={{ maxHeight: 300, overflowY: 'auto', marginBottom: 16 }}>
+              <ul style={{ color: '#fff' }}>
+                {loteSelecionado.map(id => (
+                  <li key={id}>{id}</li>
+                ))}
+              </ul>
+            </div>
+            <div style={{display:'flex',gap:12,marginTop:24}}>
+              <button onClick={()=>setConfirmarVenda(false)}>Cancelar</button>
+              <button onClick={async ()=>{

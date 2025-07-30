@@ -40,3 +40,46 @@ export async function lancarDespesa({ descricao, valor, categoria, data, status 
     obs,
   };
 }
+
+// Novo: Registrar empréstimo aprovado como receita
+export async function registrarEmprestimo({ instituicao, valor, linha, parcelas, taxaMes }) {
+  const dataAtual = new Date().toISOString().slice(0, 10);
+  const valorParcela = (valor * taxaMes * Math.pow(1 + taxaMes, parcelas)) / (Math.pow(1 + taxaMes, parcelas) - 1);
+  const totalPago = valorParcela * parcelas;
+  
+  const payload = {
+    descricao: `Empréstimo ${linha} - ${instituicao}`,
+    valor: valor,
+    data: dataAtual,
+    categoria: 'Empréstimo',
+    status: 'Recebida',
+    obs: `Instituição: ${instituicao} | Linha: ${linha} | Parcelas: ${parcelas}x | Total a pagar: R$ ${totalPago.toLocaleString('pt-BR')}`
+  };
+
+  const res = await fetch(`${API_BASE}/receitas`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  
+  if (!res.ok) throw new Error('Erro ao registrar empréstimo');
+  return res.json();
+}
+
+// Novo: Registrar parcela de empréstimo como despesa
+export async function registrarParcelaEmprestimo({ instituicao, valorParcela, numeroParcela, totalParcelas, dataVencimento }) {
+  const payload = {
+    descricao: `Parcela ${numeroParcela}/${totalParcelas} - ${instituicao}`,
+    valor: valorParcela,
+    vencimento: dataVencimento,
+    categoria: 'Empréstimo',
+    status: 'A Pagar',
+    obs: `Parcela ${numeroParcela} de ${totalParcelas}`
+  };
+
+  // Por enquanto, simulamos localmente até ter endpoint POST para despesas
+  return {
+    id: Math.floor(Math.random() * 100000),
+    ...payload
+  };
+}

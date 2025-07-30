@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
-import { TempoJogoProvider } from './context/TempoJogoContext';
+
+console.log('main.jsx está sendo executado');
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <TempoJogoProvider>
-        <App />
-      </TempoJogoProvider>
+      <App />
     </BrowserRouter>
   </React.StrictMode>
 );

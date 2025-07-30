@@ -1,30 +1,43 @@
 [
   {
     "id": 1,
-    "nome": "Frigorífico Boi Forte",
+    "nome": "Frigorífico Rei do Gado",
     "localizacao": "Barretos - SP",
     "capacidade": 1200,
-    "status": "Ativo"
+    "status": "Ativo",
+    "descricao": "Relacionamento com o Cliente: Este frigorífico prioriza a eficiência e a rapidez nas transações. O contato é direto e pragmático, ideal para o produtor que busca liquidez imediata.",
+    "pagamento": ["À vista (até 24h após abate e pesagem final da carcaça)"]
   },
   {
     "id": 2,
-    "nome": "Frigorífico Pampa",
+    "nome": "Frigorífico Terra Nova",
     "localizacao": "Alegrete - RS",
     "capacidade": 900,
-    "status": "Ativo"
+    "status": "Ativo",
+    "descricao": "Relacionamento com o Cliente: A filosofia aqui é a construção de uma parceria de longo prazo. O frigorífico oferece um programa de fidelidade, com bonificações por qualidade da carcaça, conformidade com padrões de sustentabilidade e frequência de entrega. Há um gerente de contas dedicado a cada grupo de produtores, oferecendo suporte técnico e informações de mercado.",
+    "pagamento": ["30 dias (possibilidade de adiantamento parcial com taxa de juros)", "Bonificações pagas semestralmente"]
   },
   {
     "id": 3,
-    "nome": "Frigorífico Sertanejo",
+    "nome": "Frigovale",
     "localizacao": "Goiânia - GO",
     "capacidade": 1100,
-    "status": "Ativo"
+    "status": "Ativo",
+    "descricao": "O Frigovale opera com uma filosofia pragmática: escala acima de tudo. O relacionamento com o pecuarista é direto, sem formalidades e focado em fechar negócio rapidamente. Os compradores do Frigovale estão sempre com pressa, buscando preencher metas de abate para atender grandes contratos com redes de supermercados e atacadistas, que exigem quantidade e preço competitivo, mas não necessariamente uma qualidade de boutique. A empresa convive com um fluxo de caixa apertado. Ela usa o prazo de pagamento estendido aos produtores como uma forma de financiar seu capital de giro. Essencialmente, o Frigovale vende a carne e recebe por ela antes de terminar de pagar o pecuarista que a forneceu. Essa estratégia agressiva permite que eles ofereçam o bônus de 3%, mas também é a causa raiz dos seus problemas de liquidez e atrasos ocasionais.",
+    "pagamento": [
+      "30/60 dias: pagamento dividido em duas parcelas iguais, a primeira paga em 30 dias após o abate e a segunda em 60 dias",
+      "+3% sobre o valor total do lote (bônus pelo prazo longo)",
+      "Risco de atraso: 25% de chance de atraso na segunda parcela (15 a 30 dias)",
+      "Contrato de exclusividade: jogador pode injetar R$200.000,00 no caixa do Frigovale para bônus de 5% e prioridade no pagamento, reduzindo risco de atraso por um período"
+    ]
   },
   {
     "id": 4,
-    "nome": "Frigorífico Pantanal",
+    "nome": "Bovino's Prime",
     "localizacao": "Cuiabá - MT",
     "capacidade": 1000,
-    "status": "Ativo"
+    "status": "Ativo",
+    "descricao": "Relacionamento com o Cliente: Este frigorífico busca produtores que trabalham com raças específicas e manejo diferenciado, visando um mercado de alto padrão. O relacionamento é de exclusividade, com contratos que preveem o fornecimento de toda a produção. O frigorífico oferece consultoria especializada para garantir os mais altos padrões de qualidade.",
+    "pagamento": ["Pagamento em 7 dias", "Prêmio fixo por arroba até 20% acima do mercado, dependendo da classificação da carne"]
   }
 ]
